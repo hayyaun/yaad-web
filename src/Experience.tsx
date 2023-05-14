@@ -1,6 +1,6 @@
 import { Box, OrbitControls, OrthographicCamera, useTexture } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
-import { Physics, RigidBody } from "@react-three/rapier";
+import { Physics, RigidBody, useRapier } from "@react-three/rapier";
 import { Fragment, useLayoutEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import BalanceModel from "./Balance";

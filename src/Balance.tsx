@@ -1,6 +1,5 @@
 import { useGLTF } from "@react-three/drei";
-import { useFrame } from "@react-three/fiber";
-import { RigidBody, useRevoluteJoint, useSphericalJoint } from "@react-three/rapier";
+import { RigidBody, useRevoluteJoint } from "@react-three/rapier";
 import { useEffect, useLayoutEffect, useRef } from "react";
 import * as THREE from "three";
 import { GLTF } from "three-stdlib";
@@ -34,13 +33,13 @@ export default function BalanceModel({ children, ...props }: JSX.IntrinsicElemen
   ]);
 
   const leftJoint = useRevoluteJoint(_rigidTop, _rigidLeft, [
-    [-1, 2.55, 0],
+    [-1, 2.63, 0],
     [-1, 2.63, 0],
     [0, 0, 1],
   ]);
 
   const rightJoint = useRevoluteJoint(_rigidTop, _rigidRight, [
-    [1, 2.55, 0],
+    [1, 2.63, 0],
     [1, 2.63, 0],
     [0, 0, 1],
   ]);
@@ -48,11 +47,13 @@ export default function BalanceModel({ children, ...props }: JSX.IntrinsicElemen
   useEffect(() => {
     if (topJoint.current && leftJoint.current && rightJoint.current) {
       topJoint.current.setLimits(-0.15, 0.15);
+      // config contacts
       topJoint.current.setContactsEnabled(false);
-      // topJoint.current.configureMotor(0, 0, 1, 1);
-      // leftJoint.current.configureMotor(0, 0, 0, 10000);
-      // rightJoint.current.configureMotor(0, 0, 0, 10000);
-      // topJoint.current.configureMotorVelocity(10, 2);
+      leftJoint.current.setContactsEnabled(false);
+      rightJoint.current.setContactsEnabled(false);
+      // config motors
+      // leftJoint.current.configureMotor(0, 0, 10, 0.001);
+      // rightJoint.current.configureMotor(0, 0, 10, 0.001);
     }
   }, [leftJoint, rightJoint, topJoint]);
 
