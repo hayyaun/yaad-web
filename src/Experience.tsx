@@ -1,13 +1,16 @@
 import { Box, OrbitControls, OrthographicCamera, useTexture } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
-import { Physics, RigidBody, useRapier } from "@react-three/rapier";
+import { Bloom, EffectComposer } from "@react-three/postprocessing";
+import { Physics, RigidBody } from "@react-three/rapier";
+// import { KernelSize, Resolution } from "postprocessing";
 import { Fragment, useLayoutEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import BalanceModel from "./Balance";
-import Objects from "./objects";
 
-const accentBlue = new THREE.Color(57, 127, 243);
-const bgColor = new THREE.Color(246, 248, 252);
+// const accentBlue = new THREE.Color(57, 127, 243);
+// const bgColor = new THREE.Color(246, 248, 252);
+const accentBlue = "#397ff3";
+const bgColor = "#222222";
 
 const CAMERA = {
   init: {
@@ -34,9 +37,15 @@ export default function Experience() {
     camera.updateProjectionMatrix();
   }, [camera]);
 
+  const _rightObjectMaterial = useRef<THREE.MeshStandardMaterial>(null!);
   useFrame((state, delta) => {
+    const et = state.clock.elapsedTime;
     // update camera
     state.camera.lookAt(CAMERA.final.look);
+    // update glow
+    if (_rightObjectMaterial.current) {
+      _rightObjectMaterial.current.emissiveIntensity = 0.6 + Math.abs(Math.sin(Math.PI * et * 0.12)) * 0.2;
+    }
   });
 
   const [showRight, setShowRight] = useState(false);
@@ -50,7 +59,7 @@ export default function Experience() {
     }, 2000);
   }, []);
 
-  const matcap = useTexture("/3d/2D2D2F_C6C2C5_727176_94949B.png");
+  const matcap = useTexture("/3d/2A2A2A_B3B3B3_6D6D6D_848C8C.png");
 
   return (
     <Fragment>
@@ -64,7 +73,7 @@ export default function Experience() {
         <RigidBody type="fixed">
           <mesh receiveShadow position-y={-0.21}>
             <boxGeometry args={[10, 0.5, 10]} />
-            <meshStandardMaterial color="greenyellow" />
+            <meshBasicMaterial color={bgColor} />
           </mesh>
         </RigidBody>
         {/* balance model */}
@@ -80,13 +89,33 @@ export default function Experience() {
           </RigidBody>
         )}
         {showRight && (
-          <RigidBody mass={20}>
+          <RigidBody mass={1000}>
             <Box position={[1, 1.5, 0]} scale={0.3}>
-              <meshStandardMaterial color="mediumpurple" />
+              <meshStandardMaterial
+                ref={_rightObjectMaterial}
+                name="RightObjectMaterial"
+                color={accentBlue}
+                emissive="white"
+                emissiveIntensity={0.75}
+                toneMapped={false}
+              />
             </Box>
           </RigidBody>
         )}
       </Physics>
+      <EffectComposer>
+        <Bloom
+          intensity={1.0} // The bloom intensity.
+          blurPass={undefined} // A blur pass.
+          // blendFunction={THREE.NormalBlending}
+          // kernelSize={KernelSize.LARGE} // blur kernel size
+          luminanceThreshold={0.9} // luminance threshold. Raise this value to mask out darker elements in the scene.
+          luminanceSmoothing={0.025} // smoothness of the luminance threshold. Range is [0, 1]
+          mipmapBlur // Enables or disables mipmap blur.
+          // resolutionX={Resolution.AUTO_SIZE} // The horizontal resolution.
+          // resolutionY={Resolution.AUTO_SIZE} // The vertical resolution.
+        />
+      </EffectComposer>
     </Fragment>
   );
 }
