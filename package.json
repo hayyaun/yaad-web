@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "ts-lint": "tsc --noEmit --incremental --watch",
+    "ts-lint-commit-hook": "tsc --noEmit --incremental"
   },
   "dependencies": {
     "@react-three/drei": "^9.68.3",

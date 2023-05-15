@@ -33,14 +33,14 @@ export default function BalanceModel({ children, ...props }: JSX.IntrinsicElemen
   ]);
 
   const leftJoint = useRevoluteJoint(_rigidTop, _rigidLeft, [
-    [-1, 2.63, 0],
-    [-1, 2.63, 0],
+    [-1.1, 2.63, 0],
+    [-1.1, 2.63, 0],
     [0, 0, 1],
   ]);
 
   const rightJoint = useRevoluteJoint(_rigidTop, _rigidRight, [
-    [1, 2.63, 0],
-    [1, 2.63, 0],
+    [0.98, 2.63, 0],
+    [0.98, 2.63, 0],
     [0, 0, 1],
   ]);
 
