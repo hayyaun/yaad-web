@@ -1,6 +1,6 @@
 import { Box, Html, OrbitControls, OrthographicCamera, useTexture } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
-import { Bloom, EffectComposer } from "@react-three/postprocessing";
+import { Bloom, EffectComposer, Vignette } from "@react-three/postprocessing";
 import { Physics, RigidBody } from "@react-three/rapier";
 import { Fragment, useLayoutEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
@@ -94,6 +94,7 @@ export default function Experience() {
           luminanceSmoothing={0.025} // smoothness of the luminance threshold. Range is [0, 1]
           mipmapBlur // Enables or disables mipmap blur.
         />
+        <Vignette />
       </EffectComposer>
     </Fragment>
   );

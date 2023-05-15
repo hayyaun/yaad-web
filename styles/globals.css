@@ -51,7 +51,9 @@ a {
   align-items: center;
   /* background-color: red; */
   position: relative;
-  padding: 0 var(--padd-h);
+  max-width: var(--max-width);
+  margin: 0 auto;
+  overflow: visible;
 }
 
 button,
