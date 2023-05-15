@@ -6,6 +6,7 @@ import { Fragment, useLayoutEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 import BalanceModel from "./Balance";
 import Content from "./Content";
+import useWindowSize from "./useWindowSize";
 
 const isDev = process.env.NODE_ENV === "development";
 const isDebug = false && isDev;
@@ -15,15 +16,21 @@ const bgColor = "#000000";
 
 export default function Experience() {
   const camera = useThree((s) => s.camera);
-  const { width, height, aspect } = useThree((s) => s.viewport);
+  const { height: innerHeight = window.innerHeight } = useWindowSize();
   const _dlight = useRef<THREE.DirectionalLight>(null!);
   const _html = useRef<THREE.Group>(null!);
+  const { viewport } = useThree();
+
+  const factorH = useMemo(() => innerHeight / 938, [innerHeight]);
+  const htmlSize = useMemo(
+    () => (viewport.getCurrentViewport().aspect < 1.25 ? factorH * 350 : factorH * 500),
+    [viewport, factorH]
+  );
 
   // useHelper(_dlight, DirectionalLightHelper);
 
-  console.log(width, height);
-  const factorH = useMemo(() => window.innerHeight / 938, [height]);
-  useLayoutEffect(() => {
+  useFrame(() => {
+    const { width, aspect } = viewport.getCurrentViewport();
     // attrs
     const data = {
       camera: {
@@ -61,12 +68,11 @@ export default function Experience() {
     camera.position.z = data.camera.position.z;
     camera.zoom = data.camera.zoom;
     camera.lookAt(data.camera.look.x, data.camera.look.y, data.camera.look.z);
+    camera.updateProjectionMatrix();
     _html.current.position.x = data.html.position.x;
     _html.current.position.y = data.html.position.y;
     _html.current.position.z = data.html.position.z;
-  }, [width, height, aspect, factorH]);
-
-  const htmlSize = useMemo(() => (aspect < 1.25 ? factorH * 350 : factorH * 500), [aspect, factorH]);
+  });
 
   return (
     <Fragment>
